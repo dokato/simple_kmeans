@@ -1,18 +1,50 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import pdb
 
 def assign_cluster(X, centroids):
+    """
+    Assignes labels accoriding to the closest Euclidian distance
+    to centroid. Distance is computed using numpy.linalg.norm.
+
+    Parameters:
+    -----
+      *X* : numpy.array
+        two dimensional data vector (n, p) where n - observations
+        p -fetures
+      *centroids*: numpy.array
+        data vector with centroids (k, p) where k nr of labels
+    Returns:
+    --------
+      *labels* : numpy.array
+        1D vector with assigned labels
+    """
     n, p = X.shape
     labels = np.zeros(n)
     for k in range(n): 
         labels[k] = np.argmin(np.linalg.norm(X[k]-centroids,axis=1))
     return labels
 
-def kmeans(X, k, eps=0.1):
+def kmeans(X, k, eps=0.1, Nruns=5):
+    """
+    Simple kmeans clustering implementations
+    
+    Parameters:
+    -----
+      *X* : numpy.array
+        two dimensional data vector (n, p) where n - observations
+        p -fetures
+      *k*: int
+        number of clusterrs
+      *eps*: float
+        convergance constant - if difference between old and updated
+        centroids is smaller than this value algorithm stops.
+    Returns:
+    --------
+      *labels* : numpy.array
+        1D vector with assigned labels from 0 to k in position p
+    """
     n, p = X.shape
-    clusters = np.zeros(k)
-    centroids = np.zeros((k, p))
+
     centroids_old = np.zeros((k, p))
     init_idxs = np.random.choice(np.arange(n), k, replace=False)
     centroids = X[init_idxs, :]
@@ -22,12 +54,11 @@ def kmeans(X, k, eps=0.1):
         # update centroids
         centroids_old = centroids.copy()
         for j in range(k):
-            centroids[j] = np.mean(X[labels==j],0)
-        if np.sum(np.abs(centroids_old-centroids))<eps:
+            centroids[j] = np.mean(X[labels==j], 0)
+        if np.sum(np.abs(centroids_old-centroids)) < eps:
             break
     return labels
-    
-    
+
 if __name__=='__main__':
      
     mu1 = np.array([0, 1])
